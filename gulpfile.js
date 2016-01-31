@@ -20,6 +20,9 @@ var source = require('vinyl-source-stream');
 // Concatinates files
 var concat = require('gulp-concat');
 
+// Lint JS/JSX files
+var lint = require('gulp-eslint');
+
 var config = {
   port: 10001,
   devBaseUrl: 'http://localhost',
@@ -72,9 +75,16 @@ gulp.task('css', function(){
     .pipe(gulp.dest(config.paths.dist + "/css"));
 });
 
-gulp.task('watch', function(){
-  gulp.watch(config.paths.html, ['html']);
-  gulp.watch(config.paths.js, ['js']);
+gulp.task('lint', function() {
+  return gulp
+    .src(config.paths.js)
+    .pipe(lint())
+    .pipe(lint.format());
 });
 
-gulp.task('default', ['html', 'js', 'css', 'open', 'watch']);
+gulp.task('watch', function(){
+  gulp.watch(config.paths.html, ['html']);
+  gulp.watch(config.paths.js, ['js', 'lint']);
+});
+
+gulp.task('default', ['html', 'js', 'css', 'lint', 'open', 'watch']);
